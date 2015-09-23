@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+<script>
+$(document).ready(function() {
+	var url = "/dialatune/search/cher";
+	$.get(url, function(data) {
+		$('<iframe />', {
+			id: "spotify",
+			name: "spotify",
+			src: "https://embed.spotify.com/?uri=" + data, 
+			width: "300",
+			height: "380",
+			frameborder: "0",
+			allowtransparency: "true"
+		}).appendTo('body');
+		jQuery(document.elementFromPoint(7, 7)).click();
+		console.log(data);
+	});
+});
+</script>
+<meta charset="UTF-8">
+<title>Spotify Play</title>
+</head>
+<body>
+</body>
+</html>
+
+
+<iframe width="100%" height="450" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/15223121&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true"></iframe>
