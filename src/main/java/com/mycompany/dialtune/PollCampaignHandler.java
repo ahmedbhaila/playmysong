@@ -32,6 +32,7 @@ public class PollCampaignHandler {
 		redisTemplate.delete(poll.getPollName() + ":choices");
 		redisTemplate.opsForZSet().removeRange(poll.getPollName() + ":count", 0, -1);
 		redisTemplate.delete(poll.getPollName());
+		redisTemplate.opsForZSet().removeRange(poll.getPollName() + ":country", 0, -1);
 	
 		
 		Map<String, String> choices = poll.getPollChoices();
