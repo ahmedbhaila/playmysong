@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+<meta charset="UTF-8">
+<title>Poll Administration Page</title>
+<script>
+	
+$(document).ready(function() {
+	
+	$('#poll_submit').on('click', function (e) {
+		e.preventDefault();
+		
+		var pollName = $("#poll_name").val();
+		var choice1 = $("#choice_1").val();
+		var choice2 = $("#choice_2").val();
+		var choice3 = $("#choice_3").val();
+		console.log("Choice 3 is " + choice3);
+		var mediaSource = $("#media_source").val();
+		
+		if(choice3 == "") {
+			var json = '{"name" : "' + pollName + '", "media_source" : "' 
+				+ mediaSource + '", "choices" : {"1": "' + choice1 + '" , "2":"' + choice2 + '"}}';
+		}
+		else {
+			var json = '{"name" : "' + pollName + '", "media_source" : "' 
+			+ mediaSource + '", "choices" : {"1": "' + choice1 + '" , "2":"' + choice2 + '"' 
+			+ ',"3":"' + choice3 + '"}}';
+		}
+		console.log("JSON is " + json);
+		$.ajax({
+			url : '/dialatune/poll',
+			type: 'POST',
+			data: json,
+			contentType: "application/json; charset=utf-8",
+		    success:function(res){
+		        alert("it works!");
+		    },
+		    error:function(res){
+		        alert("Bad thing happend! " + res.statusText);
+		    }
+		});
+	})
+
+	
+});
+</script>
+</head>
+<body>
+	<div class="container">
+		<nav class="navbar navbar-inverse">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">Play My Song</a>
+				</div>
+				<div>
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="#">Home</a></li>
+						<li><a href="play2.html">Current Poll</a></li>
+
+					</ul>
+				</div>
+			</div>
+		</nav>
+		<div class="form-poll form-horizontal">
+			<fieldset>
+
+				<!-- Form Name -->
+				<legend>Create Poll</legend>
+
+				<!-- Text input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="poll_name">Name</label>
+					<div class="col-md-4">
+						<input id="poll_name" name="poll_name" type="text"
+							placeholder="TestPoll" class="form-control input-md" required="">
+						<span class="help-block">Choose an appropriate name for
+							your poll</span>
+					</div>
+				</div>
+
+				<!-- Text input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="choice_1">Choice
+						1</label>
+					<div class="col-md-4">
+						<input id="choice_1" name="choice_1" type="text"
+							placeholder="Choice 1" class="form-control input-md" required="">
+						<span class="help-block">Enter your poll option</span>
+					</div>
+				</div>
+
+				<!-- Text input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="choice_2">Choice
+						2</label>
+					<div class="col-md-4">
+						<input id="choice_2" name="choice_2" type="text"
+							placeholder="Choice 2" class="form-control input-md" required="">
+						<span class="help-block">Enter your poll option</span>
+					</div>
+				</div>
+
+				<!-- Text input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="choice_3">Choice
+						3</label>
+					<div class="col-md-4">
+						<input id="choice_3" name="choice_3" type="text"
+							placeholder="Choice 3" class="form-control input-md"> <span
+							class="help-block">Enter your poll option</span>
+					</div>
+				</div>
+
+				<!-- Select Basic -->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="media_source">Media
+						Source</label>
+					<div class="col-md-4">
+						<select id="media_source" name="media_source" class="form-control">
+							<option value="soundcloud">SoundCloud</option>
+							<option value="spotify">Spotify</option>
+							<option value="youtube">Youtube</option>
+						</select>
+					</div>
+				</div>
+
+				<!-- Button -->
+				<div class="form-group">
+					<label class="col-md-4 control-label" for="poll_submit">Create Poll</label>
+					<div class="col-md-4">
+						<button id="poll_submit" name="poll_submit"
+							class="btn btn-primary">Button</button>
+					</div>
+				</div>
+
+			</fieldset>
+		</div>
+
+
+	</div>
+</body>
+</html>

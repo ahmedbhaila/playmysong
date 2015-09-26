@@ -1,27 +1,234 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="https://cdn.pubnub.com/pubnub.js"></script>
+<script type="text/javascript" src="http://pubnub.github.io/eon/lib/eon-chart.js"></script>
+<script type="text/javascript" src="https://github.com/downloads/davatron5000/Lettering.js/jquery.lettering-0.6.1.min.js"></script>
+<script type="text/javascript" src="http://jschr.github.io/textillate/jquery.textillate.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />
+ 
+<link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css' rel='stylesheet' />
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css' rel='stylesheet' />
+<link href="https://github.com/daneden/animate.css/blob/master/animate.min.css" rel="stylesheet">
+
+
 <script>
 $(document).ready(function() {
-	var url = "/dialatune/search/soundcloud/deadmau5";
-	$.get(url, function(data) {
-		$('<iframe />', {
-			id: "soundcloud",
-			name: "soundcloud",
-			src: "https://w.soundcloud.com/player/?&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true&url=" + data, 
-			width: "100%",
-			height: "450",
-			frameborder: "no",
-			scrolling: "no"
-		}).appendTo('body');
-		console.log(data);
+	
+	pollDetails = "/dialatune/poll/current/details"
+	$.get(pollDetails, function(pollDetails) {
+		var spanHtml = "<h4>" + pollDetails.name + "</h4><br/>";
+		console.log("Response is" + JSON.stringify(pollDetails));
+		for (var key in pollDetails.choices) {
+			  if (pollDetails.choices.hasOwnProperty(key)) {
+				  spanHtml += "<li>Text " + key + " for " + pollDetails.choices[key];
+			  }
+			}
+		
+		$("#poll_details").html(spanHtml);
+		$("#poll_details")
 	});
+	
+	$('#stop').on('click', function (e) {
+		url = "/dialatune/poll/TestPoll/expire";
+		$.get(url, function(data) {
+			
+			
+			
+			var media_source = (JSON.parse(data)).media_source;
+			
+		    if(media_source == "soundcloud") {
+				var url = "/dialatune/search/soundcloud/" + (JSON.parse(data)).artist;
+				$.get(url, function(data) {
+					$('<iframe />', {
+						id: "soundcloud",
+						name: "soundcloud",
+						src: "https://w.soundcloud.com/player/?&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true&url=" + data, 
+						width: "100%",
+						height: "450",
+						frameborder: "no",
+						scrolling: "no"
+				}).appendTo('#media');
+			
+				});
+		    }
+		    else if(media_source == "spotify") {
+		    	console.log("Embedding spotify");
+				var url = "/dialatune/search/spotify/" + (JSON.parse(data)).artist;
+				$.get(url, function(data) {
+					console.log("Spotify data is " + data);
+					$('<iframe />', {
+						id: "spotify",
+						name: "spotify",
+						src: "https://embed.spotify.com/?uri=" + data, 
+						width: "300",
+						height: "380",
+						frameborder: "0",
+						allowtransparency: "true"
+					}).appendTo('#media');
+					
+				});
+			}
+		});
+
+	})
 });
 </script>
 <meta charset="UTF-8">
 <title>SoundCloud Play</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' /> 
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width: 100%}
+  .mapbox {
+    position: relative;
+   	min-height: 500px;
+   	min-width: 1100px;
+	}
+}
+</style>
 </head>
 <body>
+
+
+<div class="container">
+
+<nav class="navbar navbar-inverse">
+                        <div class="container-fluid">
+                                <div class="navbar-header">
+                                        <a class="navbar-brand" href="#">Play My Song</a>
+                                </div>
+                                <div>
+                                        <ul class="nav navbar-nav">
+                                                <li class="active"><a href="#">Home</a></li>
+                                                <li><a href="#">Link</a></li>
+                                                <li> <button id="stop" class="btn btn-danger" type="submit">Stop Poll</button></li>
+
+                                        </ul>
+                                </div>
+                        </div>
+                </nav>
+    	
+                
+                		
+            	 
+                   
+                   
+                
+                 <div class="row">
+                		 
+                        <div class="mapbox col-md-8">
+                               <div id="map"></div>
+                        </div>
+                        
+
+            	</div> 
+            	<div class="row">
+            			<div class="col-md-3">
+                        	<div id="chart">I am a chart</div>
+                        </div>
+                        <div class="col-md-3">
+                    			<span id="poll_details"></span>
+                    	</div>
+            		    <div class="col-md-3">
+                    			<h4 id="winner" class="tlt">Winner will be annouced shortly</h4>
+                    	</div>
+                        <div class="col-md-3">
+                                <div id="media"></div>
+                        </div>
+            	</div>
+            
+			</div>  
+
+<script src='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.js'></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js'></script>
+<script>
+
+L.mapbox.accessToken = 'pk.eyJ1IjoiYWhtZWRiaGFpbGEiLCJhIjoiVlVBcFp6USJ9.RSTPMjh3hCzzYgIbZwSSOQ';
+var callmap = L.mapbox.map('map', 'mapbox.streets')
+    .setView([23.058773, 17.312896], 2);
+
+</script>
+
+<script>
+
+var pubnub = PUBNUB.init({                          
+    publish_key   : 'pub-c-8d096ba1-aa07-435b-badb-5c5d65686626',
+    subscribe_key : 'sub-c-b7b1860c-6198-11e5-88ff-02ee2ddab7fe'
+});
+eon.chart({
+	  channel: "vote_channel",
+	  pubnub : pubnub,
+	  history: true,
+	  
+	  generate: {
+	    bindto: '#chart',
+	    size: {
+	        height: 280,
+	        width: 280
+	    },
+	    data: {
+	      labels: true,
+	      type: 'donut'
+	    }
+	  }
+});
+
+pubnub.subscribe({
+    channel : "winner",
+    message : function(message,env,ch,timer,magic_ch){
+     
+
+      console.log(
+      "Message Received." + '<br>' +
+      "Channel: " + ch + '<br>' +
+      "Message: " + JSON.stringify(message)  + '<br>' +
+      "Raw Envelope: " + JSON.stringify(env) + '<br>' +
+      "Magic Channel: " + JSON.stringify(magic_ch)
+    )
+    console.log("Artist is " + message.artist);
+      
+      	$("#winner").text(message.artist);
+      	
+      	$('.tlt').textillate();
+      	
+      	
+      	
+    },
+})
+</script>
+<script>
+pubnub.subscribe({
+    channel : "map",
+    message : function(message,env,ch,timer,magic_ch){
+      console.log(
+      "Message Received." + '<br>' +
+      "Channel: " + ch + '<br>' +
+      "Message: " + JSON.stringify(message)  + '<br>' +
+      "Raw Envelope: " + JSON.stringify(env) + '<br>' +
+      "Magic Channel: " + JSON.stringify(magic_ch)
+    )
+    	console.log("Location is " + message.lat + "," + message.lng);
+        if(message.lat == undefined) {
+        	console.log("Location is undefined");
+        }
+        else{
+      		L.marker([message.lat, message.lng], {
+    	   	 icon: L.mapbox.marker.icon({'marker-symbol': message.count, 'marker-color': '0044FF'}),
+    	   	 title : message.count
+    		}).addTo(callmap);  
+    	}
+    },
+})
+</script>
+<script>
+</script>
 </body>
 </html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css' rel='stylesheet' />
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css' rel='stylesheet' />
+<meta charset="UTF-8">
+<title>Mapbox ftw</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+</style>
+</head>
+<body>
+
+
+<div id='map'></div>
+<script>
+L.mapbox.accessToken = 'pk.eyJ1IjoiYWhtZWRiaGFpbGEiLCJhIjoiVlVBcFp6USJ9.RSTPMjh3hCzzYgIbZwSSOQ';
+var map = L.mapbox.map('map', 'mapbox.streets')
+    .setView([23.058773, 17.312896], 2);
+var counter = 1;
+setInterval(function(){
+counter ++;
+console.log("Counter is " + counter)
+	//L.marker is a low-level marker constructor in Leaflet.
+L.marker([23.058773, 17.312896], {
+    /*icon: L.mapbox.marker.icon({
+        'marker-size': 'large',
+        'marker-symbol': 'bus',
+        'marker-color': '#fa0'
+    }),*/
+    icon: L.mapbox.marker.icon({'marker-symbol': counter, 'marker-color': '0044FF'}),
+    title : counter
+}).addTo(map)}, 10000);
+</script>
+</body>
+</html>
