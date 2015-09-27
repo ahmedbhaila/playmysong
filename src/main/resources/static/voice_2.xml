@@ -15,8 +15,8 @@
             <grammar xml:lang="en-US" root = "TOPLEVEL" mode="dtmf" >
                 <rule id="TOPLEVEL" scope="public">
                     <one-of>
-                        <item> 1 <tag> {choice_option1}|{choice_callerid}</tag> </item>
-                        <item> 2 <tag> {choice_option2}|{choice_callerid}</tag> </item>
+                        <item> 1 <tag> out.department={choice_option1}|{choice_callerid}</tag> </item>
+                        <item> 2 <tag> out.department={choice_option2}|{choice_callerid}</tag> </item>
                     </one-of>
                 </rule>
             </grammar>
