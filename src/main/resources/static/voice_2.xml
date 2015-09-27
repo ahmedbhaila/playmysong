@@ -22,7 +22,7 @@
             </grammar>
         </field>
         <block>
-            <submit next="/dialadoc/nexmo/voice" method="post"/>
+            <submit next="/dialatune/nexmo/voice" method="post"/>
         </block>
     </form>
 </vxml>
