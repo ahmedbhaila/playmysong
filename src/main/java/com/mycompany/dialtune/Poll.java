@@ -16,6 +16,15 @@ public class Poll implements Serializable {
 	@JsonProperty("media_source")
 	String mediaSource;
 	
+	@JsonProperty("phone_number")
+	String phoneNumber;
+	
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
 	public String getMediaSource() {
 		return mediaSource;
 	}

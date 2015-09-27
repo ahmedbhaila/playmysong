@@ -65,6 +65,13 @@ public class DialATuneController {
 		return pollHandler.getCurrentPollDetails();
 	}
 	
+	@RequestMapping(value = "/poll/current/votes")
+	@ResponseStatus(value = HttpStatus.OK)
+	@ResponseBody
+	public void getCurrentPollVotes() {
+		pollHandler.getCurrentPollVotes();
+	}
+	
 	@RequestMapping(value = "/poll/{poll_name}/activate")
 	@ResponseStatus(value = HttpStatus.OK)
 	public void activatePoll(@PathVariable("poll_name") String pollName) {

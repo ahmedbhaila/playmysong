@@ -3,9 +3,11 @@ package com.mycompany.dialtune;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 
 public class PollCampaignHandler {
@@ -15,6 +17,12 @@ public class PollCampaignHandler {
 	
 	@Autowired
 	PubNubService pubNubService;
+	
+	@Autowired
+	PollResponseHandler handler;
+	
+	@Value("${nexmo.phone.number}")
+	String phoneNumber;
 	
 	public void setupPoll(Poll poll) {
 		
@@ -87,7 +95,7 @@ public class PollCampaignHandler {
 		
 		String currentPoll = (String)redisTemplate.opsForValue().get("campaign:current");
 		if(currentPoll != null) {
-			
+			poll.setPhoneNumber(phoneNumber);
 			poll.setPollName(currentPoll);
 			poll.setMediaSource((String)redisTemplate.opsForHash().get(currentPoll, "media_source"));
 			List<String> choices = redisTemplate.opsForList().range(currentPoll + ":choices", 0, -1);
@@ -98,7 +106,26 @@ public class PollCampaignHandler {
 			poll.setPollChoices(choiceMap);
 		}
 		return poll;
+	}
+	
+	public void getCurrentPollVotes() {
+		// get current votes for all countries
+		String pollName = redisTemplate.opsForValue().get("campaign:current");
 		
+		Set<String> countries = redisTemplate.opsForZSet().range(pollName + ":country", 0, -1);
 		
+		countries.forEach( c -> {
+			JSONObject jsonObject = new JSONObject();
+			try{
+				jsonObject.put("lat", redisTemplate.opsForHash().get(c, "lat"));
+				jsonObject.put("lng", redisTemplate.opsForHash().get(c, "lng"));
+				jsonObject.put("count", (Double)redisTemplate.opsForZSet().score(pollName + ":country", c));
+			}
+			catch(Exception e) {
+				
+			}
+			pubNubService.publishMessage(jsonObject, "map");
+			handler.handleMessage(null, null);
+		});
 	}
 }

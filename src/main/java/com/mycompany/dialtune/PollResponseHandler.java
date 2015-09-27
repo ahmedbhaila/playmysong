@@ -35,8 +35,9 @@ public class PollResponseHandler {
 		// responses are numerical choices, increment number for the choice
 		/*redisTemplate.opsForHash().increment(currentCampaign + ":" + response,
 				"count", 1);*/
-		
-		redisTemplate.opsForZSet().incrementScore(currentCampaign + ":count", response, 1);
+		if(response != null) {
+			redisTemplate.opsForZSet().incrementScore(currentCampaign + ":count", response, 1);
+		}
 
 		List<String> choices = redisTemplate.opsForList().range(
 				currentCampaign + ":choices", 0, -1);
@@ -75,13 +76,24 @@ public class PollResponseHandler {
 
 			});
 			data.put("columns", mainArray);
+			
 
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		
 		pubNubService.publishMessage(data);
-		handleLocationData(currentCampaign, from);
+		data = new JSONObject();
+		try{
+			data.put("total_votes", totalVotes);
+			pubNubService.publishMessage(data, "total_votes");
+		}
+		catch(Exception ex) {
+			
+		}
+		if(from != null) {
+			handleLocationData(currentCampaign, from);
+		}
 	}
 	
 	private void handleLocationData(String currentCampaign, String from) {
