@@ -157,7 +157,7 @@ public class PollCampaignHandler {
 				source = source.replaceAll("\\{choice_desc1\\}", choiceMap.get("1"));
 				source = source.replaceAll("\\{choice_desc2\\}", choiceMap.get("2"));
 				
-				source = source.replaceAll("\\{nexmo_caller_id\\}", callerId);
+				source = source.replaceAll("\\{choice_callerid\\}", callerId);
 			}
 			else if(choiceMap.size() == 3) {
 				source = source.replaceAll("\\{choice_option1\\}", "1");
@@ -168,7 +168,7 @@ public class PollCampaignHandler {
 				source = source.replaceAll("\\{choice_desc2\\}", choiceMap.get("2"));
 				source = source.replaceAll("\\{choice_desc3\\}", choiceMap.get("3"));	
 				
-				source = source.replaceAll("\\{nexmo_caller_id\\}", callerId);
+				source = source.replaceAll("\\{choice_callerid\\}", callerId);
 			}
 		}
 		catch(Exception e) {
