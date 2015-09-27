@@ -7,8 +7,8 @@
             <grammar xml:lang="en-US" root = "TOPLEVEL" mode="voice" >
                 <rule id="TOPLEVEL" scope="public">
                     <one-of>
-                        <item> {choice_option1}|{choice_callerid} </item>
-                        <item> {choice_option2}|{choice_callerid} </item>
+                        <item>{choice_callerid}</item>
+                        <item>{choice_callerid}</item>
                     </one-of>
                 </rule>
             </grammar>
