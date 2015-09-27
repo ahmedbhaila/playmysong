@@ -24,7 +24,7 @@
             </grammar>
         </field>
         <block>
-            <submit expr="caller" next="/dialatune/nexmo/voice" method="post"/>
+            <submit namelist="caller" next="/dialatune/nexmo/voice" method="post"/>
         </block>
     </form>
 </vxml>
