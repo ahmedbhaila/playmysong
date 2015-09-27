@@ -91,6 +91,7 @@ public class DialATuneController {
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.OK)
 	public String handleNexmoVoiceCallback(@RequestParam Map<String,String> allRequestParams, ModelMap model) throws Exception {
+		allRequestParams.forEach((k,v) -> System.out.println("Key: " + k + ", value: " + v));
 		//pollResponseHandler.handleMessage(allRequestParams.get("msisdn"), allRequestParams.get("text"));
 		return "true";
 	}
