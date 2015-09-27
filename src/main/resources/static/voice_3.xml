@@ -7,8 +7,8 @@
             <grammar xml:lang="en-US" root = "TOPLEVEL" mode="voice" >
                 <rule id="TOPLEVEL" scope="public">
                     <one-of>
-                        <item>deadmau5</item>
-                        <item>faithless</item>
+                        <item>deadmau5|17732304340</item>
+                        <item>faithless|17732304340</item>
                     </one-of>
                 </rule>
             </grammar>
