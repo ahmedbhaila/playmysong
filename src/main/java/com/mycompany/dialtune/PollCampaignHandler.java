@@ -134,7 +134,7 @@ public class PollCampaignHandler {
 			handler.handleMessage(null, null);
 		});
 	}
-	public String sendVoiceXml() {
+	public String sendVoiceXml(String callerId) {
 		// get current poll campaign
 		String pollName = redisTemplate.opsForValue().get("campaign:current");
 		
@@ -151,11 +151,13 @@ public class PollCampaignHandler {
 		try{
 			source = getFileContents(voiceXmlSource);
 			if(choiceMap.size() == 2) {
-				source = source.replaceAll("/{choice_option1/}", "1");
-				source = source.replaceAll("/{choice_option2/}", "2");
+				source = source.replaceAll("\\{choice_option1\\}", "1");
+				source = source.replaceAll("\\{choice_option2\\}", "2");
 				
-				source = source.replaceAll("/{choice_desc1/}", choiceMap.get("1"));
-				source = source.replaceAll("/{choice_desc2/}", choiceMap.get("2"));
+				source = source.replaceAll("\\{choice_desc1\\}", choiceMap.get("1"));
+				source = source.replaceAll("\\{choice_desc2\\}", choiceMap.get("2"));
+				
+				source = source.replaceAll("\\{nexmo_caller_id\\}", callerId);
 			}
 			else if(choiceMap.size() == 3) {
 				source = source.replaceAll("\\{choice_option1\\}", "1");
@@ -165,6 +167,8 @@ public class PollCampaignHandler {
 				source = source.replaceAll("\\{choice_desc1\\}", choiceMap.get("1"));
 				source = source.replaceAll("\\{choice_desc2\\}", choiceMap.get("2"));
 				source = source.replaceAll("\\{choice_desc3\\}", choiceMap.get("3"));	
+				
+				source = source.replaceAll("\\{nexmo_caller_id\\}", callerId);
 			}
 		}
 		catch(Exception e) {

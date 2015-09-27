@@ -98,9 +98,10 @@ public class DialATuneController {
 	@RequestMapping(value="/nexmo/voice/call", produces="application/xml", headers = "Accept=application/xml")
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.OK)
-	public String sendVoiceXml() throws Exception {
+	public String sendVoiceXml(@RequestParam("nexmo_caller_id") String callerId) throws Exception {
+		// nexmo_caller_id=17732304340&session.callerid=unknown&session.accountid=1&session.sessionid=0bc32933db364647daede958dee16323&session.parentsessionid=2962e8376352f9dee415f36c4eb69d5b&nexmo_call_id=2962e8376352f9dee415f36c4eb69d5b-1&session.virtualplatform=Default&session.calledid=unknown
 		//pollResponseHandler.handleMessage(allRequestParams.get("msisdn"), allRequestParams.get("text"));
-		return pollHandler.sendVoiceXml();
+		return pollHandler.sendVoiceXml(callerId);
 	}
 	
 	@RequestMapping("/poll/{poll_name}/winner")
