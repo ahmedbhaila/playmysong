@@ -1,5 +1,8 @@
 package com.mycompany.dialtune;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +26,9 @@ public class PollCampaignHandler {
 	
 	@Value("${nexmo.phone.number}")
 	String phoneNumber;
+	
+	private static final String VOICE2 = "src/main/resources/static/voice_2.xml";
+	private static final String VOICE3 = "src/main/resources/static/voice_3.xml";
 	
 	public void setupPoll(Poll poll) {
 		
@@ -127,5 +133,48 @@ public class PollCampaignHandler {
 			pubNubService.publishMessage(jsonObject, "map");
 			handler.handleMessage(null, null);
 		});
+	}
+	public String sendVoiceXml() {
+		// get current poll campaign
+		String pollName = redisTemplate.opsForValue().get("campaign:current");
+		
+		// get all choices
+		
+		List<String> choices = redisTemplate.opsForList().range(pollName + ":choices", 0, -1);
+		Map<String, String> choiceMap = new HashMap<String, String>();
+		choices.forEach(c -> {
+			choiceMap.put(c, (String)redisTemplate.opsForHash().get(pollName + ":" + c, "choice"));
+		});
+		
+		String voiceXmlSource = choiceMap.size() == 2 ? VOICE2 : VOICE3;
+		String source = null;
+		try{
+			source = getFileContents(voiceXmlSource);
+			if(choiceMap.size() == 2) {
+				source = source.replaceAll("/{choice_option1/}", "1");
+				source = source.replaceAll("/{choice_option2/}", "2");
+				
+				source = source.replaceAll("/{choice_desc1/}", choiceMap.get("1"));
+				source = source.replaceAll("/{choice_desc2/}", choiceMap.get("2"));
+			}
+			else if(choiceMap.size() == 3) {
+				source = source.replaceAll("\\{choice_option1\\}", "1");
+				source = source.replaceAll("\\{choice_option2\\}", "2");
+				source = source.replaceAll("\\{choice_option3\\}", "3");
+				
+				source = source.replaceAll("\\{choice_desc1\\}", choiceMap.get("1"));
+				source = source.replaceAll("\\{choice_desc2\\}", choiceMap.get("2"));
+				source = source.replaceAll("\\{choice_desc3\\}", choiceMap.get("3"));	
+			}
+		}
+		catch(Exception e) {
+			
+		}
+		return source;
+		
+	}
+	
+	private String getFileContents(String filename) throws IOException {
+		return new String(Files.readAllBytes(Paths.get(filename)));
 	}
 }

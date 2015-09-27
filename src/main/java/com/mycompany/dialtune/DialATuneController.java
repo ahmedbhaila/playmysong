@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -84,6 +85,22 @@ public class DialATuneController {
 	public String handleNexmoCallback(@RequestParam Map<String,String> allRequestParams, ModelMap model) throws Exception {
 		pollResponseHandler.handleMessage(allRequestParams.get("msisdn"), allRequestParams.get("text"));
 		return "true";
+	}
+	
+	@RequestMapping(value="/nexmo/voice", method = RequestMethod.POST)
+	@ResponseBody
+	@ResponseStatus(value = HttpStatus.OK)
+	public String handleNexmoVoiceCallback(@RequestParam Map<String,String> allRequestParams, ModelMap model) throws Exception {
+		//pollResponseHandler.handleMessage(allRequestParams.get("msisdn"), allRequestParams.get("text"));
+		return "true";
+	}
+	
+	@RequestMapping(value="/nexmo/voice/call", produces="application/xml", headers = "Accept=application/xml")
+	@ResponseBody
+	@ResponseStatus(value = HttpStatus.OK)
+	public String sendVoiceXml() throws Exception {
+		//pollResponseHandler.handleMessage(allRequestParams.get("msisdn"), allRequestParams.get("text"));
+		return pollHandler.sendVoiceXml();
 	}
 	
 	@RequestMapping("/poll/{poll_name}/winner")

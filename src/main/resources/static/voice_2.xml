@@ -2,26 +2,27 @@
 <vxml version = "2.1">
     <form>
         <field name="department">
-            <prompt>Press 1 or say sales, press 2 or say support.</prompt>
+<!--             <prompt>Press 1 or say sales, press 2 or say support.</prompt> -->
+            <prompt>Press {choice_option1} or say {choice_desc1}, press {choice_option2} or say {choice_desc2}.</prompt>
             <grammar xml:lang="en-US" root = "TOPLEVEL" mode="voice" >
                 <rule id="TOPLEVEL" scope="public">
                     <one-of>
-                        <item> sales </item>
-                        <item> support </item>
+                        <item> {choice_desc1} </item>
+                        <item> {choice_desc2} </item>
                     </one-of>
                 </rule>
             </grammar>
             <grammar xml:lang="en-US" root = "TOPLEVEL" mode="dtmf" >
                 <rule id="TOPLEVEL" scope="public">
                     <one-of>
-                        <item> 1 <tag> out.department="sales"; </tag> </item>
-                        <item> 2 <tag> out.department="support"; </tag> </item>
+                        <item> 1 <tag> out.department={choice_desc1}; </tag> </item>
+                        <item> 2 <tag> out.department={choice_desc2}</tag> </item>
                     </one-of>
                 </rule>
             </grammar>
         </field>
         <block>
-            <submit next="../php/form.php" method="post"/>
+            <submit next="/dialadoc/nexmo/voice" method="post"/>
         </block>
     </form>
 </vxml>
