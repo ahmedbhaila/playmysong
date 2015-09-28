@@ -4,12 +4,13 @@
     <var expr={caller} name="caller"/>
         <field name="artist">
 <!--             <prompt>Press 1 or say sales, press 2 or say support.</prompt> -->
-            <prompt>Press {choice_option1} or say {choice_desc1}, press {choice_option2} or say {choice_desc2}.</prompt>
+            <prompt>Press {choice_option1} or say {choice_desc1}, press {choice_option2} or say {choice_desc2}, press {choice_option3} or say {choice_desc3}</prompt>
             <grammar xml:lang="en-US" root = "TOPLEVEL" mode="voice" >
                 <rule id="TOPLEVEL" scope="public">
                     <one-of>
                        <item>{choice_option1}</item>
-                        <item>{choice_option2}</item>
+                       <item>{choice_option2}</item>
+                       <item>{choice_option3}</item>
                     </one-of>
                 </rule>
             </grammar>
@@ -18,6 +19,7 @@
                     <one-of>
                          <item> 1 <tag> {choice_option1}</tag> </item>
                         <item> 2 <tag> {choice_option2}</tag> </item>
+                        <item> 3 <tag> {choice_option3}</tag> </item>
                     </one-of>
                 </rule>
             </grammar>
