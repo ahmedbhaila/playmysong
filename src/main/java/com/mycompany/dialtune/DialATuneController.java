@@ -69,6 +69,12 @@ public class DialATuneController {
 	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
 	public void getCurrentPollVotes() {
+		try {
+			Thread.sleep(10000);
+		}
+		catch(Exception e) {
+			
+		}
 		pollHandler.getCurrentPollVotes();
 	}
 	
