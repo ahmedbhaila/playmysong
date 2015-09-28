@@ -18,7 +18,29 @@
 <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css' rel='stylesheet' />
 <link href="https://github.com/daneden/animate.css/blob/master/animate.min.css" rel="stylesheet">
 
-
+<script>
+	$(document).load(function () {
+		// map any existing votes
+		var current_votes_url = "/dialatune/poll/current/votes";
+		$.get(current_votes_url, function (data){
+				
+		});
+		
+		pollDetails = "/dialatune/poll/current/details"
+		$.get(pollDetails, function(pollDetails) {
+			var spanHtml = "<h4>" + pollDetails.name + " " + pollDetails.phone_number + "</h4><br/>";
+			console.log("Response is" + JSON.stringify(pollDetails));
+			for (var key in pollDetails.choices) {
+				  if (pollDetails.choices.hasOwnProperty(key)) {
+					  spanHtml += "<li>Text " + key + " for " + pollDetails.choices[key];
+				  }
+				}
+			
+			$("#poll_details").html(spanHtml);
+			
+		});
+	});
+</script>
 <script>
 $(document).ready(function() {
 	
@@ -39,7 +61,7 @@ $(document).ready(function() {
 			}
 		
 		$("#poll_details").html(spanHtml);
-		$("#poll_details")
+		
 	});
 	
 	$('#stop').on('click', function (e) {
