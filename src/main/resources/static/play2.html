@@ -20,11 +20,7 @@
 
 <script>
 	$(document).load(function () {
-		// map any existing votes
-		var current_votes_url = "/dialatune/poll/current/votes";
-		$.get(current_votes_url, function (data){
-				
-		});
+		
 		
 		pollDetails = "/dialatune/poll/current/details"
 		$.get(pollDetails, function(pollDetails) {
@@ -38,6 +34,12 @@
 			
 			$("#poll_details").html(spanHtml);
 			
+		});
+		
+		// map any existing votes
+		var current_votes_url = "/dialatune/poll/current/votes";
+		$.get(current_votes_url, function (data){
+				
 		});
 	});
 </script>
