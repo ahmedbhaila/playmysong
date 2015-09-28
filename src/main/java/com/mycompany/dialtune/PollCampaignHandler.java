@@ -162,7 +162,7 @@ public class PollCampaignHandler {
 				source = source.replaceAll("\\{choice_option3\\}", "3");
 				source = source.replaceAll("\\{choice_desc3\\}", choiceMap.get("3"));	
 			}
-			source = source.replaceAll("\\{caller\\}", callerId);
+			source = source.replaceAll("\\{caller\\}", "'" + callerId + "'");
 		}
 		catch(Exception e) {
 			
