@@ -131,8 +131,9 @@ public class PollCampaignHandler {
 				
 			}
 			pubNubService.publishMessage(jsonObject, "map");
-			handler.handleMessage(null, null);
+			
 		});
+		handler.handleMessage(null, null);
 	}
 	public String sendVoiceXml(String callerId) {
 		// get current poll campaign

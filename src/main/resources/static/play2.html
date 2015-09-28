@@ -19,31 +19,6 @@
 <link href="https://github.com/daneden/animate.css/blob/master/animate.min.css" rel="stylesheet">
 
 <script>
-	$(document).load(function () {
-		
-		
-		pollDetails = "/dialatune/poll/current/details"
-		$.get(pollDetails, function(pollDetails) {
-			var spanHtml = "<h4>" + pollDetails.name + " " + pollDetails.phone_number + "</h4><br/>";
-			console.log("Response is" + JSON.stringify(pollDetails));
-			for (var key in pollDetails.choices) {
-				  if (pollDetails.choices.hasOwnProperty(key)) {
-					  spanHtml += "<li>Text " + key + " for " + pollDetails.choices[key];
-				  }
-				}
-			
-			$("#poll_details").html(spanHtml);
-			
-		});
-		
-		// map any existing votes
-		var current_votes_url = "/dialatune/poll/current/votes";
-		$.get(current_votes_url, function (data){
-				
-		});
-	});
-</script>
-<script>
 $(document).ready(function() {
 	
 	// map any existing votes
@@ -61,8 +36,16 @@ $(document).ready(function() {
 				  spanHtml += "<li>Text " + key + " for " + pollDetails.choices[key];
 			  }
 			}
-		
+		spanHtml += "<br/><br/> or dial " + pollDetails.phone_number;
 		$("#poll_details").html(spanHtml);
+		
+		// setup source logo
+		if(pollDetails.media_source == "spotify") {
+			$("#media").html("<img id='media_source_img' width='300px' height='200px' src='https://pmcvariety.files.wordpress.com/2015/05/spotify-logo.jpg'>");
+		}
+		else if(pollDetails.media_source == "soundcloud") {
+			$('#media').html("<img id='media_source_img' width='250px' height='300px' src='http://www.vectorsland.com/imgd/l75667-soundcloud-logo-63098.png'>");
+		}
 		
 	});
 	
@@ -75,7 +58,7 @@ $(document).ready(function() {
 			
 			
 			var media_source = (JSON.parse(data)).media_source;
-			
+			$("#media_source_img").remove();
 		    if(media_source == "soundcloud") {
 				var url = "/dialatune/search/soundcloud/" + (JSON.parse(data)).artist;
 				$.get(url, function(data) {
@@ -84,7 +67,7 @@ $(document).ready(function() {
 						name: "soundcloud",
 						src: "https://w.soundcloud.com/player/?&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true&url=" + data, 
 						width: "100%",
-						height: "450",
+						height: "250",
 						frameborder: "no",
 						scrolling: "no"
 				}).appendTo('#media');
@@ -101,10 +84,10 @@ $(document).ready(function() {
 						name: "spotify",
 						src: "https://embed.spotify.com/?uri=" + data, 
 						width: "300",
-						height: "380",
+						height: "250",
 						frameborder: "0",
 						allowtransparency: "true"
-					}).appendTo('#media');
+					}).html('#media');
 					
 				});
 			}
@@ -141,9 +124,11 @@ $(document).ready(function() {
                                         <ul class="nav navbar-nav">
                                                 <li class="active"><a href="#">Home</a></li>
                                                 <li><a href="#">Link</a></li>
-                                                <li> <button id="stop" class="btn btn-danger" type="submit">Stop Poll</button></li>
-
+                                                
                                         </ul>
+                                        <ul class="nav navbar-nav navbar-right">
+                							<li> <button id="stop" class="btn btn-danger navbar-btn" type="submit">Stop Poll</button></li>
+            							</ul>
                                 </div>
                         </div>
                 </nav>
@@ -153,18 +138,9 @@ $(document).ready(function() {
             	 
                    
                    
-                
-                 <div class="row">
-                		 
-                        <div class="mapbox col-md-8">
-                               <div id="map"></div>
-                        </div>
-                        
-
-            	</div> 
-            	<div class="row">
+                <div class="row">
             			<div class="col-md-3">
-                        	<div id="chart">I am a chart</div>
+                        	<div id="chart"></div>
                         </div>
                         <div class="col-md-3">
                     			<span id="poll_details"></span>
@@ -176,9 +152,19 @@ $(document).ready(function() {
                     			<h4 id="winner" class="tlt">Winner announced when polling ends</h4>
                     	</div>
                         <div class="col-md-3">
-                                <div id="media"></div>
+                                <div id="media">
+                                </div>
                         </div>
             	</div>
+                 <div class="row">
+                		 
+                        <div class="mapbox col-md-8">
+                               <div id="map"></div>
+                        </div>
+                        
+
+            	</div> 
+            	
             
 			</div>  
 
@@ -251,7 +237,6 @@ pubnub.subscribe({
       "Raw Envelope: " + JSON.stringify(env) + '<br>' +
       "Magic Channel: " + JSON.stringify(magic_ch)
     )
-    console.log("Artist is " + message.artist);
       $("#poll_details_current_vote").html("<h4>" + message.total_votes + "</h4>");
             	
     

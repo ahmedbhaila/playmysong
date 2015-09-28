@@ -70,7 +70,7 @@ public class DialATuneController {
 	@ResponseBody
 	public void getCurrentPollVotes() {
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(5000);
 		}
 		catch(Exception e) {
 			
