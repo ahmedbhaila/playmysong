@@ -1,5 +1,7 @@
 package com.mycompany.dialtune;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -40,6 +42,8 @@ public class DialATuneController {
 	@Autowired
 	NexmoService nexmoService;
 	
+	private static final String THANKYOU_VXML = "src/main/resources/static/thank_you.xml";
+	
 	@RequestMapping("/search/spotify/{artist}")
 	@ResponseBody
 	public String getTopTrackLink(@PathVariable("artist") String artist) {
@@ -70,7 +74,7 @@ public class DialATuneController {
 	@ResponseBody
 	public void getCurrentPollVotes() {
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(2000);
 		}
 		catch(Exception e) {
 			
@@ -92,14 +96,20 @@ public class DialATuneController {
 		return "true";
 	}
 	
-	@RequestMapping(value="/nexmo/voice", method = RequestMethod.POST)
+	@RequestMapping(value="/nexmo/voice", method = RequestMethod.POST, produces="application/xml", headers = "Accept=application/xml")
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.OK)
 	public String handleNexmoVoiceCallback(@RequestParam Map<String,String> allRequestParams, ModelMap model) throws Exception {
 		allRequestParams.forEach((k,v) -> System.out.println("Key: " + k + ", value: " + v));
 		pollResponseHandler.handleMessage(allRequestParams.get("caller"), allRequestParams.get("artist"));
-		//pollResponseHandler.handleMessage(allRequestParams.get("msisdn"), allRequestParams.get("text"));
-		return "true";
+		String source = null;
+		try {
+			source = new String(Files.readAllBytes(Paths.get(THANKYOU_VXML)));
+		}
+		catch(Exception e) {
+			
+		}
+		return source;
 	}
 	
 	@RequestMapping(value="/nexmo/voice/call", produces="application/xml", headers = "Accept=application/xml")
