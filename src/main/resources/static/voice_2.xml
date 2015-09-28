@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vxml version = "2.1">
     <form>
-    <var expr="17732304340" name="caller"/>
-        <field name="department">
+    <var expr={caller}" name="caller"/>
+        <field name="artist">
         
 <!--             <prompt>Press 1 or say sales, press 2 or say support.</prompt> -->
             <prompt>Press {choice_option1} or say {choice_desc1}, press {choice_option2} or say {choice_desc2}.</prompt>
             <grammar xml:lang="en-US" root = "TOPLEVEL" mode="voice" >
                 <rule id="TOPLEVEL" scope="public">
                     <one-of>
-                        <item>deadmau5|17732304340</item>
-                        <item>faithless|17732304340</item>
+                        <item>{choice_option1}</item>
+                        <item>{choice_option2}</item>
                     </one-of>
                 </rule>
             </grammar>
             <grammar xml:lang="en-US" root = "TOPLEVEL" mode="dtmf" >
                 <rule id="TOPLEVEL" scope="public">
                     <one-of>
-                        <item> 1 <tag> out.department={choice_option1}|{choice_callerid}</tag> </item>
-                        <item> 2 <tag> out.department={choice_option2}|{choice_callerid}</tag> </item>
+                        <item> 1 <tag> {choice_option1}</tag> </item>
+                        <item> 2 <tag> {choice_option2}</tag> </item>
                     </one-of>
                 </rule>
             </grammar>
         </field>
         <block>
-            <submit namelist="caller department" next="/dialatune/nexmo/voice" method="post"/>
+            <submit namelist="caller artist" next="/dialatune/nexmo/voice" method="post"/>
         </block>
     </form>
 </vxml>
