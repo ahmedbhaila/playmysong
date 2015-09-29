@@ -19,6 +19,15 @@ public class Poll implements Serializable {
 	@JsonProperty("phone_number")
 	String phoneNumber;
 	
+	@JsonProperty("active")
+	boolean active;
+	
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}

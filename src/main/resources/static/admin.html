@@ -19,7 +19,9 @@
 	
 $(document).ready(function() {
 	
-	$('#poll_submit').on('click', function (e) {
+	
+	
+	$("form").on('submit',function(e){
 		e.preventDefault();
 		
 		var pollName = $("#poll_name").val();
@@ -45,10 +47,12 @@ $(document).ready(function() {
 			data: json,
 			contentType: "application/json; charset=utf-8",
 		    success:function(res){
-		        alert("it works!");
+		        $("#message").addClass('alert alert-success');
+		        $("#message").html("Poll Created");
 		    },
 		    error:function(res){
-		        alert("Bad thing happend! " + res.statusText);
+		    	$("#message").addClass('alert alert-danger');
+		        $("#message").html("There was an error creating this poll");
 		    }
 		});
 	})
@@ -66,14 +70,16 @@ $(document).ready(function() {
 				</div>
 				<div>
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="#">Home</a></li>
-						<li><a href="play2.html">Current Poll</a></li>
-
+						<li class="active"><a href="#">Poll Administration</a></li>
+                        <li><a href="polls.html">Poll List</a></li>
+                        <li><a href="poll.html">Current Poll</a></li>
 					</ul>
 				</div>
 			</div>
 		</nav>
-		<div class="form-poll form-horizontal">
+		<div id="message"></div>
+		<form method="post">
+		  <div class="form-poll form-horizontal">
 			<fieldset>
 
 				<!-- Form Name -->
@@ -84,7 +90,7 @@ $(document).ready(function() {
 					<label class="col-md-4 control-label" for="poll_name">Name</label>
 					<div class="col-md-4">
 						<input id="poll_name" name="poll_name" type="text"
-							placeholder="TestPoll" class="form-control input-md" required="">
+							placeholder="TestPoll" class="form-control input-md" required>
 						<span class="help-block">Choose an appropriate name for
 							your poll</span>
 					</div>
@@ -96,7 +102,7 @@ $(document).ready(function() {
 						1</label>
 					<div class="col-md-4">
 						<input id="choice_1" name="choice_1" type="text"
-							placeholder="Choice 1" class="form-control input-md" required="">
+							placeholder="Choice 1" class="form-control input-md" required>
 						<span class="help-block">Enter your poll option</span>
 					</div>
 				</div>
@@ -107,7 +113,7 @@ $(document).ready(function() {
 						2</label>
 					<div class="col-md-4">
 						<input id="choice_2" name="choice_2" type="text"
-							placeholder="Choice 2" class="form-control input-md" required="">
+							placeholder="Choice 2" class="form-control input-md" required>
 						<span class="help-block">Enter your poll option</span>
 					</div>
 				</div>
@@ -138,16 +144,16 @@ $(document).ready(function() {
 
 				<!-- Button -->
 				<div class="form-group">
-					<label class="col-md-4 control-label" for="poll_submit">Create Poll</label>
-					<div class="col-md-4">
-						<button id="poll_submit" name="poll_submit"
-							class="btn btn-primary">Button</button>
+					<div class="col-md-4 col-sm-offset-4">
+						<input type="submit" id="poll_submit" name="poll_submit"
+							class="btn btn-primary">
 					</div>
 				</div>
 
 			</fieldset>
+			
 		</div>
-
+	    </form>
 
 	</div>
 </body>

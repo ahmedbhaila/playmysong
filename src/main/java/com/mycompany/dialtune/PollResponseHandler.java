@@ -60,40 +60,40 @@ public class PollResponseHandler {
 		
 		JSONArray mainArray = new JSONArray();
 		final Double fTotalVotes = totalVotes;
-		try {
+		if(fTotalVotes != 0.0) {
+			try {
 
-			indiVotes.forEach((k, v) -> {
-				try{
-					JSONArray val = new JSONArray();
-					val.put(k);
-					val.put(v / fTotalVotes * 100);
+				indiVotes.forEach((k, v) -> {
+					try{
+						JSONArray val = new JSONArray();
+						val.put(k);
+						val.put(v / fTotalVotes * 100);
 
-					mainArray.put(val);
-				}
-				catch(Exception e) {
-					e.printStackTrace();
-				}
+						mainArray.put(val);
+					}
+					catch(Exception e) {
+						e.printStackTrace();
+					}
 
-			});
-			data.put("columns", mainArray);
-			
-
-		} catch (JSONException e) {
-			e.printStackTrace();
+				});
+				data.put("columns", mainArray);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}	
+			pubNubService.publishMessage(data);
+			data = new JSONObject();
+			try{
+				data.put("total_votes", totalVotes);
+				pubNubService.publishMessage(data, "total_votes");
+			}
+			catch(Exception ex) {
+				
+			}
+			if(from != null) {
+				handleLocationData(currentCampaign, from);
+			}
 		}
 		
-		pubNubService.publishMessage(data);
-		data = new JSONObject();
-		try{
-			data.put("total_votes", totalVotes);
-			pubNubService.publishMessage(data, "total_votes");
-		}
-		catch(Exception ex) {
-			
-		}
-		if(from != null) {
-			handleLocationData(currentCampaign, from);
-		}
 	}
 	
 	private void handleLocationData(String currentCampaign, String from) {

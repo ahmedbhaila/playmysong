@@ -6,20 +6,27 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="https://cdn.pubnub.com/pubnub.js"></script>
 <script type="text/javascript" src="http://pubnub.github.io/eon/lib/eon-chart.js"></script>
-<script type="text/javascript" src="https://github.com/downloads/davatron5000/Lettering.js/jquery.lettering-0.6.1.min.js"></script>
-<script type="text/javascript" src="http://jschr.github.io/textillate/jquery.textillate.js"></script>
+<script type="text/javascript" src="https://jschr.github.io/textillate/assets/jquery.lettering.js"></script>
+<script type="text/javascript" src="https://jschr.github.io/textillate/jquery.textillate.js"></script>
+<script type="text/javascript" src="https://w.soundcloud.com/player/api.js"></script>
+<script src="http://github.hubspot.com/odometer/odometer.js"></script>
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 <link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />
+<link rel="stylesheet" href="http://github.hubspot.com/odometer/themes/odometer-theme-car.css" />
  
 <link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />
 <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css' rel='stylesheet' />
 <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css' rel='stylesheet' />
-<link href="https://github.com/daneden/animate.css/blob/master/animate.min.css" rel="stylesheet">
+<link href="https://jschr.github.io/textillate/assets/animate.css" rel="stylesheet">
 
 <script>
 $(document).ready(function() {
+	
+	
+	
+	
 	
 	// map any existing votes
 	var current_votes_url = "/dialatune/poll/current/votes";
@@ -29,14 +36,14 @@ $(document).ready(function() {
 	
 	pollDetails = "/dialatune/poll/current/details"
 	$.get(pollDetails, function(pollDetails) {
-		var spanHtml = "<h4>" + pollDetails.name + " " + pollDetails.phone_number + "</h4><br/>";
+		var spanHtml = "<div class='panel-heading'>Current Poll: <b>" + pollDetails.name + "</b></div><div class='panel-body'>Text:<b>" + pollDetails.phone_number + "</b><br/><br/>";
 		console.log("Response is" + JSON.stringify(pollDetails));
 		for (var key in pollDetails.choices) {
 			  if (pollDetails.choices.hasOwnProperty(key)) {
 				  spanHtml += "<li>Text " + key + " for " + pollDetails.choices[key];
 			  }
-			}
-		spanHtml += "<br/><br/> or dial " + pollDetails.phone_number;
+	    }
+		spanHtml += "<br/><br/> IVR: <b>" + pollDetails.phone_number + "</b></div>";
 		$("#poll_details").html(spanHtml);
 		
 		// setup source logo
@@ -44,15 +51,15 @@ $(document).ready(function() {
 			$("#media").html("<img id='media_source_img' width='300px' height='200px' src='https://pmcvariety.files.wordpress.com/2015/05/spotify-logo.jpg'>");
 		}
 		else if(pollDetails.media_source == "soundcloud") {
-			$('#media').html("<img id='media_source_img' width='250px' height='300px' src='http://www.vectorsland.com/imgd/l75667-soundcloud-logo-63098.png'>");
+			$('#media').html("<br/><br/><img id='media_source_img' src='img/soundcloud.png'>");
 		}
 		
 	});
 	
 	$('#stop').on('click', function (e) {
-	
 		
-		url = "/dialatune/poll/TestPoll/expire";
+		$("#stop").prop("disabled",true);
+		url = "/dialatune/poll/current/expire";
 		$.get(url, function(data) {
 			
 			
@@ -70,7 +77,17 @@ $(document).ready(function() {
 						height: "250",
 						frameborder: "no",
 						scrolling: "no"
-				}).appendTo('#media');
+				    }).appendTo('#media');
+					
+					var scWidget = SC.Widget("soundcloud"); 
+					console.log("Widget is " + scWidget); 
+					scWidget.bind(SC.Widget.Events.FINISH, function() { 
+						$.get("/dialatune/poll/next", function(data) {
+							// end poll and refresh the page for next poll
+							location.reload(true);
+						});
+					});
+					
 			
 				});	
 		    }
@@ -87,12 +104,18 @@ $(document).ready(function() {
 						height: "250",
 						frameborder: "0",
 						allowtransparency: "true"
-					}).html('#media');
+					}).appendTo('#media');
 					
 				});
 			}
 		});
-
+		
+		$('iframe').load(function() {
+			var scWidget = SC.Widget("soundcloud"); 
+			console.log("Widget is " + scWidget); 
+			scWidget.bind(SC.Widget.Events.FINISH, function() { console.log("I was paused")});
+		});
+		
 	})
 });
 </script>
@@ -107,13 +130,31 @@ $(document).ready(function() {
    	min-height: 500px;
    	min-width: 1100px;
 	}
+	
+	.odometer {
+    	font-size: 30px;
+	}
+	.fullscreen_bg {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-size: cover;
+    background-position: 50% 50%;
+    background-image: url('http://cleancanvas.herokuapp.com/img/backgrounds/color-splash.jpg');
+    background-repeat:repeat;
+  }
+  .well {
+     background-color: rgba(245, 245, 245, 0.4);
+   }
+   
 }
 </style>
 </head>
 <body>
 
-
-<div class="container">
+<div id="fullscreen_bg" class="fullscreen_bg">
+<div class="container well">
 
 <nav class="navbar navbar-inverse">
                         <div class="container-fluid">
@@ -122,9 +163,9 @@ $(document).ready(function() {
                                 </div>
                                 <div>
                                         <ul class="nav navbar-nav">
-                                                <li class="active"><a href="#">Home</a></li>
-                                                <li><a href="#">Link</a></li>
-                                                
+                                                <li class="active"><a href="#">Current Poll</a></li>
+                                                <li><a href="admin.html">Poll Adminstration</a></li>
+                                                <li><a href="polls.html">Poll List</a></li>
                                         </ul>
                                         <ul class="nav navbar-nav navbar-right">
                 							<li> <button id="stop" class="btn btn-danger navbar-btn" type="submit">Stop Poll</button></li>
@@ -137,28 +178,41 @@ $(document).ready(function() {
                 		
             	 
                    
-                   
+                  
                 <div class="row">
             			<div class="col-md-3">
-                        	<div id="chart"></div>
+                        	<div id="chart">No Poll Data yet</div>
                         </div>
-                        <div class="col-md-3">
-                    			<span id="poll_details"></span>
+                        <div class="col-md-4">
+                        	<div id="poll_details" class="panel panel-primary">
                     			<br/>
-                    			<span>Total Votes: </span>
-                    			<span id="poll_details_current_vote"></span>
+                    			
+                    		</div>
+                    		<div>Vote Count&nbsp;&nbsp;<div class="odometer" id="poll_details_current_vote"></div></div>
                     	</div>
-            		    <div class="col-md-2">
-                    			<h4 id="winner" class="tlt">Winner announced when polling ends</h4>
+            		    <div class="col-md-5">
+<!--                     			<h3 id="winner" class="tlt">Winner: Pending</h3> -->
+
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<h3 class="panel-title">Winner</h3>
+								</div>
+								<div id="winner" class="panel-body">TBD</div>
+							</div>
+							<div id="media">
+                                	<div id="media_content"></div>
+                            </div>
+							
+						
+                    			
                     	</div>
                         <div class="col-md-3">
-                                <div id="media">
-                                </div>
+                               
                         </div>
             	</div>
                  <div class="row">
                 		 
-                        <div class="mapbox col-md-8">
+                        <div class="mapbox col-md-10">
                                <div id="map"></div>
                         </div>
                         
@@ -216,9 +270,9 @@ pubnub.subscribe({
     )
     console.log("Artist is " + message.artist);
       
-      	$("#winner").text(message.artist);
+      	$("#winner").text("And the winner is ... " + message.artist);
       	
-      	$('.tlt').textillate();
+      	$('.tlt').textillate({loop: true});
       	
       	
       	
@@ -237,8 +291,8 @@ pubnub.subscribe({
       "Raw Envelope: " + JSON.stringify(env) + '<br>' +
       "Magic Channel: " + JSON.stringify(magic_ch)
     )
-      $("#poll_details_current_vote").html("<h4>" + message.total_votes + "</h4>");
-            	
+      //$("#poll_details_current_vote").html("Total Votes: <b>" + message.total_votes + "</b>");
+      $('.odometer').html(message.total_votes);	
     
       	
       	
@@ -272,5 +326,6 @@ pubnub.subscribe({
 </script>
 <script>
 </script>
+</div>
 </body>
 </html>

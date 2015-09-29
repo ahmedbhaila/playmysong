@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,23 +31,29 @@ public class PollCampaignHandler {
 	private static final String VOICE2 = "src/main/resources/static/voice_2.xml";
 	private static final String VOICE3 = "src/main/resources/static/voice_3.xml";
 	
-	public void setupPoll(Poll poll) {
-		
+	public void deletePoll(String poll) {
 		// remove any old references to this poll
 		// 2. choices list
 		// 3. choice count set
 		// 4. poll meta data
 		// 1. all poll choices
-		
-		List<String> choiceList = redisTemplate.opsForList().range(poll.getPollName() + ":choices", 0, -1);
+				
+		List<String> choiceList = redisTemplate.opsForList().range(poll + ":choices", 0, -1);
 		choiceList.forEach(c -> {
-			redisTemplate.opsForHash().delete(poll.getPollName() + ":" + c, "count");
-			redisTemplate.opsForHash().delete(poll.getPollName() + ":" + c, "choice");
+			redisTemplate.opsForHash().delete(poll + ":" + c, "count");
+			redisTemplate.opsForHash().delete(poll + ":" + c, "choice");
 		});
-		redisTemplate.delete(poll.getPollName() + ":choices");
-		redisTemplate.opsForZSet().removeRange(poll.getPollName() + ":count", 0, -1);
-		redisTemplate.delete(poll.getPollName());
-		redisTemplate.opsForZSet().removeRange(poll.getPollName() + ":country", 0, -1);
+		
+		redisTemplate.delete(poll + ":choices");
+		redisTemplate.opsForZSet().removeRange(poll + ":count", 0, -1);
+		redisTemplate.delete(poll);
+		redisTemplate.opsForZSet().removeRange(poll + ":country", 0, -1);
+			
+	}
+	
+	public void setupPoll(Poll poll) {
+		
+		deletePoll(poll.getPollName());
 	
 		
 		Map<String, String> choices = poll.getPollChoices();
@@ -61,7 +68,11 @@ public class PollCampaignHandler {
 		
 		// set media source
 		redisTemplate.opsForHash().put(poll.getPollName(), "media_source", poll.getMediaSource());
-		activatePoll(poll.getPollName());
+		
+		// insert poll in queue
+		redisTemplate.opsForList().rightPush("polls", poll.getPollName());
+		
+		//activatePoll(poll.getPollName());
 	}
 	
 	public void activatePoll(String pollName) {
@@ -83,10 +94,10 @@ public class PollCampaignHandler {
 		return choiceValue;
 	}
 	
-	public JSONObject expirePoll(String pollName) {
+	public JSONObject expirePoll() {
 		JSONObject jsonObject = new JSONObject();
 		try{
-			
+			String pollName = (String)redisTemplate.opsForValue().get("campaign:current");
 			jsonObject.put("artist", getWinner(pollName));
 			jsonObject.put("media_source", redisTemplate.opsForHash().get(pollName, "media_source"));
 		}
@@ -110,8 +121,33 @@ public class PollCampaignHandler {
 				choiceMap.put(c, (String)redisTemplate.opsForHash().get(currentPoll + ":" + c, "choice"));
 			});
 			poll.setPollChoices(choiceMap);
+			poll.setActive(true);
 		}
 		return poll;
+	}
+	
+	public List<Poll> getPolls() {
+		List<String> pollNames = redisTemplate.opsForList().range("polls", 0, -1);
+		List<Poll> polls = new LinkedList<Poll>();
+		
+		// get any current polls
+		polls.add(getCurrentPollDetails());
+		pollNames.forEach(p -> {
+			Poll poll = new Poll();
+			poll.setPhoneNumber(phoneNumber);
+			poll.setPollName(p);
+			poll.setMediaSource((String)redisTemplate.opsForHash().get(p, "media_source"));
+			List<String> choices = redisTemplate.opsForList().range(p + ":choices", 0, -1);
+			Map<String, String> choiceMap = new HashMap<String, String>();
+			choices.forEach(c -> {
+				choiceMap.put(c, (String)redisTemplate.opsForHash().get(p + ":" + c, "choice"));
+			});
+			poll.setPollChoices(choiceMap);
+			poll.setActive(false);
+			polls.add(poll);
+			
+		});
+		return polls;
 	}
 	
 	public void getCurrentPollVotes() {
@@ -173,5 +209,16 @@ public class PollCampaignHandler {
 	
 	private String getFileContents(String filename) throws IOException {
 		return new String(Files.readAllBytes(Paths.get(filename)));
+	}
+	
+	public void setNextPoll() {
+		String currentPoll = redisTemplate.opsForValue().get("campaign:current");
+		if(currentPoll != null) {
+			deletePoll(currentPoll);
+		}
+		String nextPoll = redisTemplate.opsForList().leftPop("polls");
+		if(nextPoll != null) {
+			redisTemplate.opsForValue().set("campaign:current", nextPoll);
+		}
 	}
 }

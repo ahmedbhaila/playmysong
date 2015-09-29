@@ -2,6 +2,7 @@ package com.mycompany.dialtune;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -60,6 +61,13 @@ public class DialATuneController {
 	@ResponseStatus(value = HttpStatus.OK)
 	public void setupPoll(@RequestBody Poll poll) {
 		pollHandler.setupPoll(poll);
+	}
+	
+	@RequestMapping(value = "/polls")
+	@ResponseStatus(value = HttpStatus.OK)
+	@ResponseBody
+	public List<Poll> getPolls(@RequestParam("order") String order) {
+		return pollHandler.getPolls();
 	}
 	
 	@RequestMapping(value = "/poll/current/details")
@@ -128,12 +136,20 @@ public class DialATuneController {
 		return pollHandler.getWinner(pollName);
 	}
 	
-	@RequestMapping("/poll/{poll_name}/expire")
+	@RequestMapping("/poll/current/expire")
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.OK)
-	public String expirePoll(@PathVariable("poll_name") String pollName) {
-		return pollHandler.expirePoll(pollName).toString();
+	public String expirePoll() {
+		return pollHandler.expirePoll().toString();
 	}
+	
+	@RequestMapping("/poll/next")
+	@ResponseBody
+	@ResponseStatus(value = HttpStatus.OK)
+	public void nextPoll() {
+		pollHandler.setNextPoll();
+	}
+	
 	
 	@RequestMapping("/nexmo/{phone_number}/country")
 	@ResponseBody

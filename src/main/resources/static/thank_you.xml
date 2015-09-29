@@ -2,7 +2,7 @@
 <vxml version="2.1">
     <form>
         <block>
-            <prompt>Thanks for voting</prompt>
+            <prompt>Thanks for voting. Goodbye.</prompt>
         </block>
     </form>
 </vxml>
