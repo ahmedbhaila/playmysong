@@ -72,7 +72,9 @@ public class PollCampaignHandler {
 		// insert poll in queue
 		redisTemplate.opsForList().rightPush("polls", poll.getPollName());
 		
-		//activatePoll(poll.getPollName());
+		
+		// disable this to enable poll chaining
+		activatePoll(poll.getPollName());
 	}
 	
 	public void activatePoll(String pollName) {
