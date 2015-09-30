@@ -93,6 +93,7 @@ public class PollResponseHandler {
 				handleLocationData(currentCampaign, from);
 			}
 		}
+		nexmoService.sendSMS(from);
 		
 	}
 	
