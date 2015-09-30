@@ -25,9 +25,9 @@
 $(document).ready(function() {
 	
 	
-	
-	$.get("/dialatune/poll/next", function(data) {
-	});
+	// disabled for testing, enable this to activate new poll as they are added
+	/*$.get("/dialatune/poll/next", function(data) {
+	});*/
 	
 	// map any existing votes
 	var current_votes_url = "/dialatune/poll/current/votes";
@@ -80,6 +80,9 @@ $(document).ready(function() {
 						scrolling: "no"
 				    }).appendTo('#media');
 					
+					// poll chaining disabled
+					
+					/*
 					var scWidget = SC.Widget("soundcloud"); 
 					console.log("Widget is " + scWidget); 
 					scWidget.bind(SC.Widget.Events.FINISH, function() { 
@@ -88,6 +91,8 @@ $(document).ready(function() {
 							location.reload(true);
 						});
 					});
+					*/
+					// end poll chaining disabled
 					
 			
 				});	
